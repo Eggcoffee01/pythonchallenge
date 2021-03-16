@@ -1,0 +1,64 @@
+import os
+import requests
+from bs4 import BeautifulSoup
+from babel.numbers import format_currency
+
+os.system("clear")
+
+"""
+Use the 'format_currency' function to format the output of the conversion
+format_currency(AMOUNT, CURRENCY_CODE, locale="ko_KR" (no need to change this one))
+"""
+
+country_list = []
+input_list = []
+def money_input():
+    try:
+        print(f"\nHow many {country_list[input_list[0]][2]} do you want to convert to {country_list[input_list[1]][2]}?")
+        moneyValue = int(input())
+        input_list.append(float(moneyValue))
+        country_convert()
+    except:
+        print("That wasn't a number.")
+        money_input()
+
+def country_input():
+    print("\nWhere are you from? Choose a country by number.\n")
+    country_one = int(input("#: "))
+    input_list.append(country_one)
+    print(country_list[input_list[0]][0])
+    print("\nNow choose another country.\n")
+    country_two = int(input("#: "))
+    input_list.append(country_two)
+    print(country_list[input_list[1]][0])
+    money_input()
+
+
+def country_convert():
+    URL = f"https://transferwise.com/gb/currency-converter/{country_list[input_list[0]][2].lower()}-to-{country_list[input_list[1]][2].lower()}-rate?amount={input_list[2]}"
+    r = requests.get(URL)
+    soup = BeautifulSoup(r.text, "html.parser")
+    convertValue = soup.find("span", {"class": "text-success"}).string
+
+    print(format_currency(input_list[2], country_list[input_list[0]][2].upper(), locale="ko_KR"),"is",format_currency(float(convertValue)*input_list[2], "KRW", locale="ko_KR"))
+
+
+def getCode():
+    URL = "https://www.iban.com/currency-codes"
+    r = requests.get(URL)
+    soup = BeautifulSoup(r.text, "html.parser")
+    tables = soup.find("table", {"class": "table"}).find("tbody")
+    table_list = tables.find_all("tr");
+    for table in table_list:
+        tds = table.find_all("td")
+        for td in range(0,4):
+            tds[td] = tds[td].text
+        if tds[1] != "No universal currency":
+            country_list.append(tds)
+def main():
+    print("Hello! Please choose select a country by number:")
+    for i in range(len(country_list)):
+        print('#', i, country_list[i][0])
+    country_input()
+getCode()
+main()
