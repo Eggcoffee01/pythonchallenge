@@ -1,0 +1,29 @@
+import requests
+import os
+
+condition = "y"
+while condition == 'y':
+    os.system('cls')
+    urls = input("Please write a URLS or URLS you want to check. (separated by comma)\n")
+    url_list = urls.split(',')
+    for url in url_list:
+        url = url.strip()
+        if ('.com' in url):
+            if (('http://' in url) is False):
+                url = 'http://' + url
+            try:
+                r = requests.get(url)
+            except:
+                    print(f"{url} is down!")
+            else:
+                if(r.status_code == 200):
+                    print(f"{url} is up!")
+                else:
+                    print(f"{url} is down!")
+        else:
+            print(f"{url} is not a valid URL.")
+    condition = input("Do you want to start over? y/n ")
+    while condition != 'y' and condition != 'n':
+        print("That's not a valid answer.")
+        condition = input("Do you want to start over? y/n ")
+print("k. bye!")
