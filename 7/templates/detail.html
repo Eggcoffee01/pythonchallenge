@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://andybrewer.github.io/mvp/mvp.css" rel="stylesheet"></link>
+</head>
+<body>
+  <header>
+    <h1>{{title}}</h1>
+    <div>
+      {{points}} points | By {{author}} | <a href="{{link}}"> {{link}}</a>
+    </div>
+  </header>
+  <main>
+    {%for data in db%}
+    {%if data['author'] == None %}
+    <div>
+      [deleted]
+    </div>
+    {% else %}
+    <div>
+      <strong>{{data['author']}}:</strong>
+      <p></p>
+      <p>{{data['text']|safe}}</p>
+      <p></p>
+    </div>
+    {% endif %}
+    <hr>
+    {%endfor%}
+  </main>
+</body>
+</html>

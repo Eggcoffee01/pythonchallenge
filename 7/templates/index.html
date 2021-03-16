@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://andybrewer.github.io/mvp/mvp.css" rel="stylesheet"></link>
+</head>
+<body>
+  <header>
+    <h1>Nomad News</h1>
+    <div>Order by:
+      <{{first_tag}} {{first_href}}>Popular</{{first_tag}}>
+      |
+      <{{second_tag}} {{second_href}}>New</{{second_tag}}>
+    </div>
+  </header>
+  <main>
+    {%for data in db%}
+  <div>
+    <a href="/{{data.id}}"><h3>{{data.title}}</h3></a>
+    (<a href="{{data.link}}" target="_blanl">{{data.link}}</a>)
+  </div>
+  <div>
+  {{data.points}} points | By: {{data.author}} | {{data.comments}} comments
+  </div>
+  <hr>
+  {%endfor%}
+  </main>
+  
+  
+</body>
+</html>
