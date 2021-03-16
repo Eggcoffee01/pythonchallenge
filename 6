@@ -1,0 +1,55 @@
+import os
+import csv
+import requests
+from bs4 import BeautifulSoup
+
+os.system("clear")
+alba_url = "http://www.alba.co.kr"
+
+r = requests.get(alba_url)
+soup = BeautifulSoup(r.text, "html.parser")
+main_super_brand = soup.find("div", {"id": "MainSuperBrand"})
+brands = main_super_brand.find_all("a", {"class": "goodsBox-info"})
+
+brand_list = []
+
+for brand in brands:
+    name = brand.find("span", {"class": "company"}).get_text(strip='/')
+    link = brand["href"]
+    brand_list.append({"name": name, "link": link})
+
+
+def create_csv(list, name):
+    f = open(f'{name}.csv', 'w', encoding='utf-8', newline='')
+    writer = csv.writer(f)
+    writer.writerow(["place", "title", "time", "pay", "date"])
+    for li in list:
+        writer.writerow([li.get('place'), li.get('title'), li.get('time'), li.get('pay'), li.get('date')])
+
+
+def extract_job(list):
+    for i in range(len(list)):
+        job_list = []
+        job_url = list[i]["link"]
+        job_result = requests.get(job_url)
+        job_soup = BeautifulSoup(job_result.text, "html.parser")
+        job = job_soup.find("tbody")
+        jobs = job.find_all("tr")
+        print(job_url)
+        for job in jobs:
+            try:
+                if job["class"] != 'summaryView':
+                    place = job.find("td", {"class": "local"}).get_text(strip="&nbsp;")
+                    title = job.find("td", {"class": "title"}).find("a").find("span").get_text(strip=True)
+                    time = job.find("td", {"class": "data"}).find("span").string
+                    pay = job.find("td", {"class": "pay"}).find("span", {"class": "payIcon"}).string + job.find("td", {
+                        "class": "pay"}).find("span", {"class": "number"}).string
+                    date = job.find("td", {"class": "regDate"}).text
+                    job_list.append({"place": place, "title": title, "time": time, "pay": pay, "date": date})
+            except:
+                pass
+        if (len(job_list) > 0):
+            create_csv(job_list, list[i]["name"].replace('/', ' '))
+
+
+extract_job(brand_list)
