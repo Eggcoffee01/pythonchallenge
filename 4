@@ -1,0 +1,39 @@
+import os
+import requests
+from bs4 import BeautifulSoup
+
+os.system("clear")
+
+country_list = []
+def country_input():
+    try:
+        number_input = int(input("#: "))
+        if number_input >= 0 and number_input <= 264:
+
+            print(f"You chose {country_list[number_input][0]}")
+            print(f"The currency code is {country_list[number_input][2]}")
+        else:
+            print("Choose a number from the list.")
+            country_input()
+    except:
+        print("That wasn't a number.")
+        country_input()
+def getCode():
+    URL = "https://www.iban.com/currency-codes"
+    r = requests.get(URL)
+    soup = BeautifulSoup(r.text, "html.parser")
+    tables = soup.find("table", {"class": "table"}).find("tbody")
+    table_list = tables.find_all("tr");
+    for table in table_list:
+        tds = table.find_all("td")
+        for td in range(0,4):
+            tds[td] = tds[td].text
+        if tds[1] != "No universal currency":
+            country_list.append(tds)
+def main():
+    print("Hello! Please choose select a country by number:")
+    for i in range(len(country_list)):
+        print('#', i, country_list[i][0])
+    country_input()
+getCode()
+main()
